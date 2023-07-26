@@ -3,9 +3,15 @@ import React from 'react';
 function App() {
   return (
     <div className="fixed w-full h-full p-5 bg-gradient-to-br from-black to-slate-800">
+      <div className='absolute top-0 w-full h-1/6 bg-gradient-to-b from-black to-transparent z-10'/>
       <div className='relative flex flex-col h-5/6 text-white text-5xl leading-tight'>
-        <h1 className='mb-6'>Hi!</h1>
-        <h1>I'm an AI chat assistant here to introduce <span className='text-blue-400'>Product</span></h1>
+        <div className='absolute bottom-0'>
+          <h1 className='mb-6'>Hi!</h1>
+          <h1 className='mb-6'>I'm an AI chat assistant here to introduce <span className='text-blue-400'>Product</span></h1>
+          <p className='mb-6'>Text here for response</p>
+          <p className='mb-6'>Text here for response</p>
+          <p className='mb-6'>Text here for response</p>
+        </div>
       </div>
       <div className='relative h-1/6 flex flex-col'>
         <div className='flex flex-row leading-none mb-5 text-sm'>
