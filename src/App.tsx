@@ -1,4 +1,5 @@
 import React from 'react';
+import QuestionPill from './QuestionPill/QuestionPill';
 
 const COLORS = [
   'red',
@@ -15,6 +16,7 @@ const COLORS = [
   'rose',
 ]
 const COLOR = COLORS[Math.floor(Math.random() * COLORS.length)]
+const PRODUCT_NAME = 'Review Droid'
 
 interface Message {
   text: string,
@@ -25,7 +27,7 @@ interface Message {
 function App() {
   const [messages, setMessages] = React.useState<Message[]>([
     {text: 'Hi!', isUser: false, fontSize: '5xl'},
-    {text: 'I\'m an AI chat assistant here to introduce <Product>', isUser: false, fontSize: '5xl'},
+    {text: `I'm an AI chat assistant here to introduce <${PRODUCT_NAME}>`, isUser: false, fontSize: '5xl'},
   ])
 
   const messageBoxRef = React.useRef<HTMLTextAreaElement>(null)
@@ -39,17 +41,14 @@ function App() {
       )
     })}
 
-  const sendMessage = () => {
-    const message = messageBoxRef.current?.value
-    if (message) {
-      setMessages([...messages, {text: message, isUser: true}])
-      messageBoxRef.current!.value = ''
+  const sendMessage = (text: string) => {
+    setMessages([...messages, {text, isUser: true}])
+    messageBoxRef.current!.value = ''
 
-      // the extra ! is to tell typescript that we know this will never be null
-      setTimeout(() => {
-        scrollBoxRef.current!.scrollTop = scrollBoxRef.current!.scrollHeight
-      }, 0)
-    }
+    // the extra ! is to tell typescript that we know this will never be null
+    setTimeout(() => {
+      scrollBoxRef.current!.scrollTop = scrollBoxRef.current!.scrollHeight
+    }, 0)
   }
 
   // when text box is active and user presses enter, send message
@@ -57,7 +56,7 @@ function App() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Enter') {
         event.preventDefault()
-        sendMessage()
+        sendMessage(messageBoxRef.current!.value)
       }
     }
     document.addEventListener('keydown', handleKeyDown)
@@ -77,9 +76,9 @@ function App() {
       </div>
       <div className='relative h-1/6 flex flex-col'>
         <div className='flex flex-row leading-none mb-5 text-sm'>
-          <button className={`rounded-full bg-${COLOR}-400 p-1 m-2 px-2 outline-white`}>What's Product?</button>
-          <button className={`rounded-full bg-${COLOR}-400 p-1 m-2 px-2 outline-white`}>How does this work?</button>
-          <button className={`rounded-full bg-${COLOR}-400 p-1 m-2 px-2 outline-white`}>Who are you?</button>
+          <QuestionPill question={`What is ${PRODUCT_NAME}?`} color={COLOR} sendMessage={sendMessage}/>
+          <QuestionPill question='How does this work?' color={COLOR} sendMessage={sendMessage}/>
+          <QuestionPill question='Who are you?' color={COLOR} sendMessage={sendMessage}/>
         </div>
         <div className='w-full h-1/2 outline outline-white flex flex-row'>
           <textarea 
@@ -89,7 +88,7 @@ function App() {
           />
           <button 
             className={`bg-${COLOR}-400 p-3 w-1/6`}
-            onClick={sendMessage}
+            onClick={() => sendMessage(messageBoxRef.current!.value)}
           >Send</button>
         </div>
       </div>
