@@ -42,7 +42,8 @@ function App() {
 
   const sendMessage = async (text: string) => {
     const updatedChat: Message[] = [...messages, {content: text, role: 'user'}]
-    const response = await Chat.getCompletion(updatedChat)
+    setMessages(updatedChat)
+    const response = await Chat.getCompletion(updatedChat.map(msg => {return {content: msg.content, role: msg.role}}))
     setMessages([...updatedChat, {content: response, role: 'assistant'}])
     messageBoxRef.current!.value = ''
 
@@ -77,7 +78,7 @@ function App() {
       <div className='relative h-1/6 flex flex-col'>
         <div className='flex flex-row leading-none mb-5 text-sm'>
           <QuestionPill question={`What is ${PRODUCT_NAME}?`} color={COLOR} sendMessage={sendMessage}/>
-          <QuestionPill question='How does this work?' color={COLOR} sendMessage={sendMessage}/>
+          <QuestionPill question='How does it work?' color={COLOR} sendMessage={sendMessage}/>
           <QuestionPill question='Who are you?' color={COLOR} sendMessage={sendMessage}/>
         </div>
         <div className='w-full h-1/2 outline outline-white flex flex-row'>
