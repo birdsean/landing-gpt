@@ -1,5 +1,6 @@
 import React from 'react';
 import QuestionPill from './QuestionPill/QuestionPill';
+import Chat, { ChatMessage } from './api/Chat';
 
 const COLORS = [
   'red',
@@ -18,16 +19,14 @@ const COLORS = [
 const COLOR = COLORS[Math.floor(Math.random() * COLORS.length)]
 const PRODUCT_NAME = 'Review Droid'
 
-interface Message {
-  text: string,
-  isUser: boolean
+interface Message extends ChatMessage {
   fontSize?: string
 }
 
 function App() {
   const [messages, setMessages] = React.useState<Message[]>([
-    {text: 'Hi!', isUser: false, fontSize: '5xl'},
-    {text: `I'm an AI chat assistant here to introduce <${PRODUCT_NAME}>`, isUser: false, fontSize: '5xl'},
+    {content: 'Hi!', role: 'assistant', fontSize: '5xl'},
+    {content: `I'm an AI chat assistant here to introduce <${PRODUCT_NAME}>`, role: 'assistant', fontSize: '5xl'},
   ])
 
   const messageBoxRef = React.useRef<HTMLTextAreaElement>(null)
@@ -35,17 +34,18 @@ function App() {
 
   const renderMessages = () => {
     return messages.map((message, index) => {
-      const emphasizedMsg = {__html: message.text.replace(/<(.+?)>/g, `<span class=\'text-${message.isUser ? '' : COLOR}-400\'>$1</span>`)}
+      const emphasizedMsg = {__html: message.content.replace(/<(.+?)>/g, `<span class=\'text-${message.role === 'user' ? '' : COLOR}-400\'>$1</span>`)}
       return (
-        <p key={index} className={`mb-6 break-words ${message.isUser ? `text-${COLOR}-400` : 'text-white'} text-${message.fontSize || 'xl'}`} dangerouslySetInnerHTML={emphasizedMsg}/>
+        <p key={index} className={`mb-6 break-words ${message.role === 'user' ? `text-${COLOR}-400` : 'text-white'} text-${message.fontSize || 'xl'}`} dangerouslySetInnerHTML={emphasizedMsg}/>
       )
     })}
 
-  const sendMessage = (text: string) => {
-    setMessages([...messages, {text, isUser: true}])
+  const sendMessage = async (text: string) => {
+    const updatedChat: Message[] = [...messages, {content: text, role: 'user'}]
+    const response = await Chat.getCompletion(updatedChat)
+    setMessages([...updatedChat, {content: response, role: 'assistant'}])
     messageBoxRef.current!.value = ''
 
-    // the extra ! is to tell typescript that we know this will never be null
     setTimeout(() => {
       scrollBoxRef.current!.scrollTop = scrollBoxRef.current!.scrollHeight
     }, 0)
