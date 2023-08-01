@@ -71,6 +71,7 @@ function App() {
       <div className='fixed top-0 w-full h-1/6 bg-gradient-to-b from-black to-transparent z-10'/>
       <div className='relative flex flex-col h-5/6 leading-tight'>
         <div className='absolute bottom-0 h-full overflow-y-auto overflow-x-hidden w-full' ref={scrollBoxRef}>
+          <p className='py-12'/>
           {renderMessages()}
         </div>
       </div>
