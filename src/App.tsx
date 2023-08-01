@@ -19,22 +19,23 @@ const COLOR = COLORS[Math.floor(Math.random() * COLORS.length)]
 interface Message {
   text: string,
   isUser: boolean
+  fontSize?: string
 }
 
 function App() {
   const [messages, setMessages] = React.useState<Message[]>([
-    {text: 'Hi!', isUser: false},
-    {text: 'I\'m an AI chat assistant here to introduce <Product>', isUser: false},
+    {text: 'Hi!', isUser: false, fontSize: '5xl'},
+    {text: 'I\'m an AI chat assistant here to introduce <Product>', isUser: false, fontSize: '5xl'},
   ])
 
   const messageBoxRef = React.useRef<HTMLTextAreaElement>(null)
+  const scrollBoxRef = React.useRef<HTMLDivElement>(null)
 
   const renderMessages = () => {
     return messages.map((message, index) => {
       const emphasizedMsg = {__html: message.text.replace(/<(.+?)>/g, `<span class=\'text-${message.isUser ? '' : COLOR}-400\'>$1</span>`)}
-      console.log(message.isUser)
       return (
-        <p key={index} className={`mb-6 ${message.isUser ? `text-${COLOR}-400` : ''}`} dangerouslySetInnerHTML={emphasizedMsg}/>
+        <p key={index} className={`mb-6 break-words ${message.isUser ? `text-${COLOR}-400` : 'text-white'} text-${message.fontSize || 'xl'}`} dangerouslySetInnerHTML={emphasizedMsg}/>
       )
     })}
 
@@ -44,10 +45,10 @@ function App() {
       setMessages([...messages, {text: message, isUser: true}])
       messageBoxRef.current!.value = ''
 
-      // scroll text area to bottom
-      console.log(messageBoxRef.current!.scrollHeight, messageBoxRef.current!.scrollTop)
-      messageBoxRef.current.setAttribute('scrolltop', '67')
-      console.log(messageBoxRef.current!.scrollHeight, messageBoxRef.current!.scrollTop)
+      // the extra ! is to tell typescript that we know this will never be null
+      setTimeout(() => {
+        scrollBoxRef.current!.scrollTop = scrollBoxRef.current!.scrollHeight
+      }, 0)
     }
   }
 
@@ -68,8 +69,8 @@ function App() {
   return (
     <div className="fixed w-full h-full p-5 bg-gradient-to-br from-black to-slate-800">
       <div className='fixed top-0 w-full h-1/6 bg-gradient-to-b from-black to-transparent z-10'/>
-      <div className='relative flex flex-col h-5/6 text-white text-5xl leading-tight'>
-        <div className='absolute bottom-0 h-full overflow-y-auto overflow-x-hidden w-full'>
+      <div className='relative flex flex-col h-5/6 leading-tight'>
+        <div className='absolute bottom-0 h-full overflow-y-auto overflow-x-hidden w-full' ref={scrollBoxRef}>
           {renderMessages()}
         </div>
       </div>
