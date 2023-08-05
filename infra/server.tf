@@ -76,7 +76,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 resource "aws_lambda_function" "api_landing_gpt_function" {
   function_name = "api-landing-gpt"
   role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "build/main/index.handler"
+  handler       = "build/src.handler"
 
   s3_bucket = aws_s3_bucket.server_code.id
   s3_key    = aws_s3_object.server_code_release.key
@@ -90,3 +90,15 @@ resource "aws_lambda_function" "api_landing_gpt_function" {
   }
 }
 
+resource "aws_lambda_function_url" "api_url" {
+  function_name      = aws_lambda_function.api_landing_gpt_function.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_origins     = ["*"]
+    allow_methods     = ["*"]
+    allow_headers     = ["*"]
+    expose_headers    = ["*"]
+    max_age           = 0
+  }
+}
