@@ -16,7 +16,7 @@ resource "aws_s3_bucket_versioning" "release_versioning" {
   }
 }
 
-# Upload Code
+# Upload Code to S3
 resource "aws_s3_object" "server_code_release" {
   bucket = aws_s3_bucket.server_code.id
   key    = "${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}_api-landing-gpt.zip"

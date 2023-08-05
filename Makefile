@@ -12,6 +12,6 @@ package: package-client package-server
 
 deploy: package
 	@echo "Deploying..."
-	@cd infra && terraform apply
+	@cd infra && terraform apply -auto-approve
 	@aws s3 sync client/build s3://landing-gpt-releases/
 	@echo "Done deploying"
