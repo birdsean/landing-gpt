@@ -76,7 +76,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 resource "aws_lambda_function" "api_landing_gpt_function" {
   function_name = "api-landing-gpt"
   role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "index.handler"
+  handler       = "build/main/index.handler"
 
   s3_bucket = aws_s3_bucket.server_code.id
   s3_key    = aws_s3_object.server_code_release.key
