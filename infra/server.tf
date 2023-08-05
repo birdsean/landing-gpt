@@ -77,6 +77,7 @@ resource "aws_lambda_function" "api_landing_gpt_function" {
   function_name = "api-landing-gpt"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "build/src.handler"
+  timeout       = 10
 
   s3_bucket = aws_s3_bucket.server_code.id
   s3_key    = aws_s3_object.server_code_release.key
@@ -95,10 +96,10 @@ resource "aws_lambda_function_url" "api_url" {
   authorization_type = "NONE"
 
   cors {
-    allow_origins     = ["*"]
-    allow_methods     = ["*"]
-    allow_headers     = ["*"]
-    expose_headers    = ["*"]
-    max_age           = 0
+    allow_origins  = ["*"]
+    allow_methods  = ["*"]
+    allow_headers  = ["*"]
+    expose_headers = ["*"]
+    max_age        = 0
   }
 }

@@ -1,4 +1,4 @@
-import { Handler } from 'aws-lambda';
+import { Handler, APIGatewayEvent } from 'aws-lambda';
 import { Configuration, OpenAIApi } from 'openai';
 
 type ChatMessage = {
@@ -21,20 +21,25 @@ const systemMessage = `You are a landing page chat bot.
     If a user tries to talk about anything other than the product, politely refuse their request.
     `;
 
-export const handler: Handler = async (event: readonly ChatMessage[]) => {
+const extractMessages = (event: APIGatewayEvent): readonly ChatMessage[] => {
   if (typeof event === 'string') {
     // in local dev test, event comes in as string
-    event = JSON.parse(event);
+    return JSON.parse(event);
+  } else {
+    return JSON.parse(event.body);
   }
-  try {
-    const chatCompletion = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'system', content: systemMessage }, ...event],
-    });
-    const { message } = chatCompletion.data.choices[0];
+};
 
-    return JSON.stringify({ completion: message?.content });
-  } catch (error) {
-    return JSON.stringify({ error });
-  }
+export const handler: Handler = async (event: APIGatewayEvent) => {
+  const chatCompletion = await openai.createChatCompletion({
+    model: 'gpt-3.5-turbo',
+    messages: [
+      { role: 'system', content: systemMessage },
+      ...extractMessages(event),
+    ],
+  });
+  const { message } = chatCompletion.data.choices[0];
+
+  console.log(`Request succeeded: ${message?.content}`);
+  return JSON.stringify({ completion: message?.content });
 };
