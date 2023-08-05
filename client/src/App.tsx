@@ -42,6 +42,10 @@ function App() {
   const sendMessage = async (text: string) => {
     const updatedChat: Message[] = [...messages, {content: text, role: 'user'}]
     setMessages(updatedChat)
+    setTimeout(() => {
+      scrollBoxRef.current!.scrollTop = scrollBoxRef.current!.scrollHeight
+    }, 0)
+    
     messageBoxRef.current!.value = ''
     const response = await Chat.getCompletion(updatedChat.map(msg => {return {content: msg.content, role: msg.role}}))
     setMessages([...updatedChat, {content: response, role: 'assistant'}])
