@@ -17,11 +17,11 @@ resource "aws_s3_bucket_versioning" "release_versioning" {
 }
 
 # Upload Code
-resource "aws_s3_object" "code_release" {
-  bucket = aws_s3_bucket.server_code.id
-  key    = "${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}_api-landing-gpt.zip"
-  source = "../build/api-landing-gpt.zip"
-}
+# resource "aws_s3_object" "code_release" {
+#   bucket = aws_s3_bucket.server_code.id
+#   key    = "${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}_api-landing-gpt.zip"
+#   source = "../build/api-landing-gpt.zip"
+# }
 
 # Lambda Role Policy
 
@@ -73,24 +73,24 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 
 # Lambda
 
-resource "aws_lambda_function" "api_landing_gpt_function" {
-  function_name = "api-landing-gpt"
-  role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "index.handler"
+# resource "aws_lambda_function" "api_landing_gpt_function" {
+#   function_name = "api-landing-gpt"
+#   role          = aws_iam_role.iam_for_lambda.arn
+#   handler       = "index.handler"
 
-  s3_bucket = aws_s3_bucket.server_code.id
-  s3_key    = aws_s3_object.code_release.key
+#   s3_bucket = aws_s3_bucket.server_code.id
+#   s3_key    = aws_s3_object.code_release.key
 
-  runtime = "nodejs18.x"
+#   runtime = "nodejs18.x"
 
-  environment {
-    variables = {
-      OPENAI_API_KEY = var.OPENAI_API_KEY
-    }
-  }
+#   environment {
+#     variables = {
+#       OPENAI_API_KEY = var.OPENAI_API_KEY
+#     }
+#   }
 
-  depends_on = [
-    aws_s3_object.code_release,
-  ]
-}
+#   depends_on = [
+#     aws_s3_object.code_release,
+#   ]
+# }
 
