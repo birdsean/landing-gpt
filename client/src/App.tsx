@@ -83,15 +83,15 @@ function App() {
   })
 
   return (
-    <div className="absolute w-full h-full p-5 bg-gradient-to-br from-black to-slate-800 min-h-screen">
+    <div className="absolute w-full p-5 bg-gradient-to-br from-black to-slate-800 min-h-screen">
       <div className='fixed top-0 w-full h-1/6 bg-gradient-to-b from-black to-transparent z-10'/>
-      <div className='relative flex flex-col h-5/6 leading-tight items-center'>
-        <div className='bottom-0 h-full overflow-y-auto overflow-x-hidden w-full max-w-prose' ref={scrollBoxRef}>
+      <div className='relative flex flex-col h-5/6 min-h-full leading-tight items-center'>
+        <div className='h-full overflow-y-auto overflow-x-hidden w-full max-w-prose' ref={scrollBoxRef}>
           <p className='py-12'/>
           {renderMessages()}
         </div>
       </div>
-      <div className='flex items-center relative h-1/6 flex-col'>
+      <div className='absolute bottom-0 left-0 flex items-center h-1/6 flex-col'>
         <div className='max-w-prose w-full'>
           <div className='flex flex-row leading-none mb-5 text-sm'>
             <QuestionPill question={`What is ${PRODUCT_NAME}?`} color={COLOR} sendMessage={sendMessage}/>
@@ -99,7 +99,7 @@ function App() {
             <QuestionPill question='Who are you?' color={COLOR} sendMessage={sendMessage}/>
           </div>
           <form 
-            className='w-full h-1/2 outline outline-1 outline-white rounded flex flex-row'
+            className='w-full h-1/2 outline outline-1 outline-white md:rounded flex flex-row'
             ref={formRef}
           > 
             <textarea 
