@@ -53,7 +53,7 @@ function App() {
 
     setTimeout(() => {
       scrollBoxRef.current!.scrollTop = scrollBoxRef.current!.scrollHeight
-    }, 0)
+    }, 100)
   }
 
   // when text box is active and user presses enter, send message
@@ -61,6 +61,7 @@ function App() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Enter') {
         event.preventDefault()
+        if (messageBoxRef.current!.value === '') return
         sendMessage(messageBoxRef.current!.value)
       }
     }
@@ -74,6 +75,7 @@ function App() {
   React.useEffect(() => {
     const handleSubmit = (event: Event) => {
       event.preventDefault()
+      if (messageBoxRef.current!.value === '') return
       sendMessage(messageBoxRef.current!.value)
     }
     formRef.current!.addEventListener('submit', handleSubmit)
@@ -90,6 +92,17 @@ function App() {
     scrollBoxRef.current!.addEventListener('scroll', handleScroll)
     return () => {
       scrollBoxRef.current!.removeEventListener('scroll', handleScroll)
+    }
+  })
+
+  React.useEffect(() => {
+    // scroll to bottom of scrollBoxRef on focusout
+    const handleFocusOut = () => {
+      window.scrollTo(0, 0)
+    }
+    document.addEventListener('focusout', handleFocusOut)
+    return () => {
+      document.removeEventListener('focusout', handleFocusOut)
     }
   })
 
