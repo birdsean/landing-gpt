@@ -85,17 +85,6 @@ function App() {
     }
   })
 
-  // on page scroll, focus scrollBoxRef
-  React.useEffect(() => {
-    const handleScroll = () => {
-      scrollBoxRef.current!.focus()
-    }
-    scrollBoxRef.current!.addEventListener('scroll', handleScroll)
-    return () => {
-      scrollBoxRef.current!.removeEventListener('scroll', handleScroll)
-    }
-  })
-
   React.useEffect(() => {
     // scroll to bottom of scrollBoxRef on focusout
     const handleFocusOut = () => {
