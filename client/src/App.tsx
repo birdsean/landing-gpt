@@ -29,7 +29,7 @@ function App() {
     {content: `I'm an AI chat assistant here to introduce <${PRODUCT_NAME}>`, role: 'assistant', fontSize: '5xl'},
   ])
 
-  const messageBoxRef = React.useRef<HTMLTextAreaElement>(null)
+  const messageBoxRef = React.useRef<HTMLInputElement>(null)
   const scrollBoxRef = React.useRef<HTMLDivElement>(null)
   const formRef = React.useRef<HTMLFormElement>(null)
 
@@ -128,9 +128,11 @@ function App() {
             className='w-full h-1/2 outline outline-1 outline-white rounded-none sm:rounded flex flex-row'
             ref={formRef}
           > 
-            <textarea 
+            <input 
               className={`bg-black caret-${COLOR}-400 text-${COLOR}-400 p-3 w-5/6 m-0 resize-none`} 
               placeholder='Enter a message to start...'
+              type='text'
+              enterKeyHint='send'
               ref={messageBoxRef}
             />
             <button 
