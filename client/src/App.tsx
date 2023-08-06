@@ -1,6 +1,7 @@
 import React from 'react';
-import QuestionPill from './QuestionPill/QuestionPill';
+import QuestionPill from './components/QuestionPill/QuestionPill';
 import Chat, { ChatMessage } from './api/Chat';
+import { isiOS } from './helpers/helpers';
 
 const COLORS = [
   'red',
@@ -111,7 +112,8 @@ function App() {
       <div className='fixed top-0 w-full h-1/6 bg-gradient-to-b from-black to-transparent z-10'/>
       <div className='relative flex flex-col h-5/6 leading-tight items-center flex-grow h-px'>
         <div className='w-full max-w-prose overflow-y-auto' ref={scrollBoxRef}>
-          <p className='py-12'/>
+          <p className='h-20'/>
+          { isiOS() ? <p className='h-20'/> : null /* no idea why, but my iPhone needs a second buffer */ }
           {renderMessages()}
         </div>
       </div>
