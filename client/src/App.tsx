@@ -86,13 +86,13 @@ function App() {
     <div className="fixed w-full h-full p-5 bg-gradient-to-br from-black to-slate-800">
       <div className='fixed top-0 w-full h-1/6 bg-gradient-to-b from-black to-transparent z-10'/>
       <div className='relative flex flex-col h-5/6 leading-tight items-center'>
-        <div className='absolute bottom-0 h-full overflow-y-auto overflow-x-hidden w-full' ref={scrollBoxRef}>
+        <div className='absolute bottom-0 h-full overflow-y-auto overflow-x-hidden w-full max-w-prose' ref={scrollBoxRef}>
           <p className='py-12'/>
           {renderMessages()}
         </div>
       </div>
       <div className='flex items-center relative h-1/6 flex-col'>
-        <div className=''>
+        <div className='max-w-prose w-full'>
           <div className='flex flex-row leading-none mb-5 text-sm'>
             <QuestionPill question={`What is ${PRODUCT_NAME}?`} color={COLOR} sendMessage={sendMessage}/>
             <QuestionPill question='How does it work?' color={COLOR} sendMessage={sendMessage}/>
