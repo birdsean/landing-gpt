@@ -83,15 +83,15 @@ function App() {
   })
 
   return (
-    <div className="absolute w-full p-5 bg-gradient-to-br from-black to-slate-800 min-h-screen">
+    <div className="absolute bottom-0 w-full p-5 bg-gradient-to-br from-black to-slate-800 min-h-screen flex flex-col">
       <div className='fixed top-0 w-full h-1/6 bg-gradient-to-b from-black to-transparent z-10'/>
-      <div className='relative flex flex-col h-5/6 min-h-full leading-tight items-center'>
-        <div className='h-full overflow-y-auto overflow-x-hidden w-full max-w-prose' ref={scrollBoxRef}>
+      <div className='relative flex flex-col h-5/6 leading-tight items-center flex-grow h-px'>
+        <div className='w-full max-w-prose overflow-y-auto' ref={scrollBoxRef}>
           <p className='py-12'/>
           {renderMessages()}
         </div>
       </div>
-      <div className='absolute bottom-0 left-0 flex items-center h-1/6 flex-col'>
+      <div className='flex items-center h-1/6 flex-col'>
         <div className='max-w-prose w-full'>
           <div className='flex flex-row leading-none mb-5 text-sm'>
             <QuestionPill question={`What is ${PRODUCT_NAME}?`} color={COLOR} sendMessage={sendMessage}/>
@@ -99,7 +99,7 @@ function App() {
             <QuestionPill question='Who are you?' color={COLOR} sendMessage={sendMessage}/>
           </div>
           <form 
-            className='w-full h-1/2 outline outline-1 outline-white md:rounded flex flex-row'
+            className='w-full h-1/2 outline outline-1 outline-white rounded-none sm:rounded flex flex-row'
             ref={formRef}
           > 
             <textarea 
@@ -114,19 +114,21 @@ function App() {
           </form>
         </div>
       </div>
-      <span className='text-red-400 bg-red-400'/>
-      <span className='text-orange-400 bg-orange-400'/>
-      <span className='text-yellow-400 bg-yellow-400'/>
-      <span className='text-green-400 bg-green-400'/>
-      <span className='text-blue-400 bg-blue-400'/>
-      <span className='text-indigo-400 bg-indigo-400'/>
-      <span className='text-purple-400 bg-purple-400'/>
-      <span className='text-cyan-400 bg-cyan-400'/>
-      <span className='text-pink-400 bg-pink-400'/>
-      <span className='text-teal-400 bg-teal-400'/>
-      <span className='text-zinc-400 bg-zinc-400'/>
-      <span className='text-rose-400 bg-rose-400'/>
-      <span className='text-5xl'/>
+      <div className='invisible'>
+        <span className='text-red-400 bg-red-400'/>
+        <span className='text-orange-400 bg-orange-400'/>
+        <span className='text-yellow-400 bg-yellow-400'/>
+        <span className='text-green-400 bg-green-400'/>
+        <span className='text-blue-400 bg-blue-400'/>
+        <span className='text-indigo-400 bg-indigo-400'/>
+        <span className='text-purple-400 bg-purple-400'/>
+        <span className='text-cyan-400 bg-cyan-400'/>
+        <span className='text-pink-400 bg-pink-400'/>
+        <span className='text-teal-400 bg-teal-400'/>
+        <span className='text-zinc-400 bg-zinc-400'/>
+        <span className='text-rose-400 bg-rose-400'/>
+        <span className='text-5xl'/>
+      </div>
     </div>
   );
 }
