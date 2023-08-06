@@ -83,10 +83,10 @@ function App() {
   })
 
   return (
-    <div className="fixed w-full h-full p-5 bg-gradient-to-br from-black to-slate-800">
+    <div className="absolute w-full h-full p-5 bg-gradient-to-br from-black to-slate-800 min-h-screen">
       <div className='fixed top-0 w-full h-1/6 bg-gradient-to-b from-black to-transparent z-10'/>
       <div className='relative flex flex-col h-5/6 leading-tight items-center'>
-        <div className='absolute bottom-0 h-full overflow-y-auto overflow-x-hidden w-full max-w-prose' ref={scrollBoxRef}>
+        <div className='bottom-0 h-full overflow-y-auto overflow-x-hidden w-full max-w-prose' ref={scrollBoxRef}>
           <p className='py-12'/>
           {renderMessages()}
         </div>
