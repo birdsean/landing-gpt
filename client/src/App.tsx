@@ -82,6 +82,17 @@ function App() {
     }
   })
 
+  // on page scroll, focus scrollBoxRef
+  React.useEffect(() => {
+    const handleScroll = () => {
+      scrollBoxRef.current!.focus()
+    }
+    scrollBoxRef.current!.addEventListener('scroll', handleScroll)
+    return () => {
+      scrollBoxRef.current!.removeEventListener('scroll', handleScroll)
+    }
+  })
+
   return (
     <div className="absolute bottom-0 w-full p-5 bg-gradient-to-br from-black to-slate-800 min-h-screen flex flex-col">
       <div className='fixed top-0 w-full h-1/6 bg-gradient-to-b from-black to-transparent z-10'/>
