@@ -108,16 +108,16 @@ function App() {
   })
 
   return (
-    <div className="absolute bottom-0 w-full p-5 bg-gradient-to-br from-black to-slate-800 min-h-screen flex flex-col">
+    <div className="absolute bottom-0 w-full p-0 bg-gradient-to-br from-black to-slate-800 min-h-screen flex flex-col">
       <div className='fixed top-0 w-full h-1/6 bg-gradient-to-b from-black to-transparent z-10'/>
       <div className='relative flex flex-col h-5/6 leading-tight items-center flex-grow h-px'>
-        <div className='w-full max-w-prose overflow-y-auto' ref={scrollBoxRef}>
+        <div className='w-full max-w-prose overflow-y-auto p-5 pb-0' ref={scrollBoxRef}>
           <p className='h-20'/>
           { isiOS() ? <p className='h-20'/> : null /* no idea why, but my iPhone needs a second buffer */ }
           {renderMessages()}
         </div>
       </div>
-      <div className='flex items-center h-1/6 flex-col'>
+      <div className='flex items-center h-1/6 flex-col p-5 pt-0'>
         <div className='max-w-prose w-full'>
           <div className='flex flex-row leading-none mb-5 text-sm'>
             <QuestionPill question={`What is ${PRODUCT_NAME}?`} color={COLOR} sendMessage={sendMessage}/>
