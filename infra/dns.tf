@@ -15,20 +15,6 @@ resource "aws_route53_record" "www" {
   depends_on = [aws_cloudfront_distribution.droid_corp_distribution]
 }
 
-resource "aws_route53_record" "naked" {
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = "droid-corp.com"
-  type    = "A"
-
-  alias {
-    name                   = aws_s3_bucket_website_configuration.redirect_bucket_config.website_domain
-    zone_id                = aws_s3_bucket.naked_domain_redirect_bucket.hosted_zone_id
-    evaluate_target_health = false
-  }
-
-  depends_on = [aws_s3_bucket.naked_domain_redirect_bucket, aws_s3_bucket_website_configuration.redirect_bucket_config]
-}
-
 resource "aws_acm_certificate" "cert" {
   domain_name       = "*.droid-corp.com"
   validation_method = "DNS"
