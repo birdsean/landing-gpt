@@ -4,7 +4,7 @@ import {
 } from 'aws-lambda';
 import {
   RequestHandler,
-  // ResponseStream,
+  ResponseStream,
   streamifyResponse,
 } from 'lambda-stream';
 import { OpenAI } from 'openai';
@@ -18,10 +18,7 @@ type CompletionResponse = {
   readonly completion: string;
 };
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAI(configuration);
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const systemMessage = `You are a landing page chat bot. 
     Your role is to convince the user to sign up for the waitlist.
@@ -45,8 +42,8 @@ const extractMessages = (
 };
 
 const handleCompletion: RequestHandler = async (
-  event: APIGatewayProxyEventV2WithRequestContext<APIGatewayEventRequestContextV2>
-  // responseStream: ResponseStream
+  event: APIGatewayProxyEventV2WithRequestContext<APIGatewayEventRequestContextV2>,
+  responseStream: ResponseStream
 ) => {
   const stream = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo',
@@ -56,14 +53,22 @@ const handleCompletion: RequestHandler = async (
     ],
     stream: true,
   });
+
+  responseStream.setContentType('application/json');
+
+  // eslint-disable-next-line functional/no-let
+  let completion = '';
+
   // eslint-disable-next-line functional/no-loop-statement
   for await (const part of stream) {
-    process.stdout.write(part.choices[0]?.delta?.content || '');
+    completion += part.choices[0]?.delta?.content || '';
+    const response = JSON.stringify({
+      completion: part.choices[0]?.delta?.content || '',
+    });
+    responseStream.write(response);
   }
-  process.stdout.write('\n');
-
-  console.log(`Request succeeded: ${'hi mom'}`);
-  return JSON.stringify({ completion: 'hi mom' } as CompletionResponse);
+  console.log(`Request completed: ${completion}`);
+  responseStream.end();
 };
 
 export const handler = streamifyResponse(handleCompletion);
