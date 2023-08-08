@@ -15,7 +15,7 @@ deploy-server: package-server
 
 deploy-client: package-client
 	@echo "Deploying client..."
-	@aws s3 sync client/build s3://landing-gpt-releases/
+	@aws s3 sync client/build s3://www.droid-corp.com/
 	@echo "Done deploying client"
 
 deploy: deploy-server deploy-client
