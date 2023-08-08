@@ -72,9 +72,7 @@ function App() {
           },
         ];
       });
-      setTimeout(() => {
-        scrollBoxRef.current!.scrollTop = scrollBoxRef.current!.scrollHeight;
-      }, 0);
+      scrollBoxRef.current!.scrollTop = scrollBoxRef.current!.scrollHeight;
     }, 0);
   };
 
