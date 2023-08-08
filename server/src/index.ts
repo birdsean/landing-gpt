@@ -14,10 +14,6 @@ type ChatMessage = {
   readonly role: 'user' | 'assistant' | 'system';
 };
 
-type CompletionResponse = {
-  readonly completion: string;
-};
-
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const systemMessage = `You are a landing page chat bot. 
@@ -54,7 +50,7 @@ const handleCompletion: RequestHandler = async (
     stream: true,
   });
 
-  responseStream.setContentType('application/json');
+  responseStream.setContentType('text/plain');
 
   // eslint-disable-next-line functional/no-let
   let completion = '';
@@ -62,10 +58,7 @@ const handleCompletion: RequestHandler = async (
   // eslint-disable-next-line functional/no-loop-statement
   for await (const part of stream) {
     completion += part.choices[0]?.delta?.content || '';
-    const response = JSON.stringify({
-      completion: part.choices[0]?.delta?.content || '',
-    });
-    responseStream.write(response);
+    responseStream.write(part.choices[0]?.delta?.content || '');
   }
   console.log(`Request completed: ${completion}`);
   responseStream.end();

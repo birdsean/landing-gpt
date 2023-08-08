@@ -4,20 +4,28 @@ export interface ChatMessage {
 }
 
 const API_URL =
-  "https://z32hkpspq7yk7rswz4axofmvw40ckvgs.lambda-url.us-east-1.on.aws/";
+  "https://h47icb3agajk2golbckv3ynmxy0ttkdg.lambda-url.us-east-1.on.aws/";
 
 export default class Chat {
-  static async getCompletion(messages: ChatMessage[]): Promise<string> {
+  static async getCompletion(messages: ChatMessage[], appendCompletion: (completion: string) => void) {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST",
       },
       body: JSON.stringify(messages),
     });
-    const data = await response.json();
-    return data.completion;
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder();
+
+    while (reader) {
+      const { value, done } = await reader.read();
+      if (done) {
+        break;
+      }
+
+      const decodedChunk = decoder.decode(value, { stream: true });
+      appendCompletion(decodedChunk);
+    }
   }
 }

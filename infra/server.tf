@@ -94,6 +94,7 @@ resource "aws_lambda_function" "api_landing_gpt_function" {
 resource "aws_lambda_function_url" "api_url" {
   function_name      = aws_lambda_function.api_landing_gpt_function.function_name
   authorization_type = "NONE"
+  invoke_mode = "RESPONSE_STREAM"
 
   cors {
     allow_origins  = ["*"]
