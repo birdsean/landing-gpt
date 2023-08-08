@@ -10,7 +10,7 @@ resource "aws_route53_record" "www" {
   alias {
     name                   = aws_cloudfront_distribution.droid_corp_distribution.domain_name
     zone_id                = aws_cloudfront_distribution.droid_corp_distribution.hosted_zone_id
-    evaluate_target_health = true
+    evaluate_target_health = false
   }
   depends_on = [aws_cloudfront_distribution.droid_corp_distribution]
 }
@@ -23,7 +23,7 @@ resource "aws_route53_record" "naked" {
   alias {
     name                   = aws_s3_bucket_website_configuration.redirect_bucket_config.website_domain
     zone_id                = aws_s3_bucket.naked_domain_redirect_bucket.hosted_zone_id
-    evaluate_target_health = true
+    evaluate_target_health = false
   }
 
   depends_on = [aws_s3_bucket.naked_domain_redirect_bucket, aws_s3_bucket_website_configuration.redirect_bucket_config]
