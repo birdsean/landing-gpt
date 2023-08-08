@@ -87,7 +87,8 @@ resource "aws_cloudfront_distribution" "droid_corp_distribution" {
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
-  http_version = "http2and3"
+  http_version        = "http2and3"
+  aliases             = ["www.droid-corp.com"]
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
@@ -118,8 +119,8 @@ resource "aws_cloudfront_distribution" "droid_corp_distribution" {
   }
 
   viewer_certificate { // hint: when bootstrapping, you need to create this distro first before the route53 record
-    acm_certificate_arn = aws_acm_certificate.cert.arn
-    ssl_support_method  = "sni-only"
+    acm_certificate_arn      = aws_acm_certificate.cert.arn
+    ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
 

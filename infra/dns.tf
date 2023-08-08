@@ -30,7 +30,7 @@ resource "aws_route53_record" "naked" {
 }
 
 resource "aws_acm_certificate" "cert" {
-  domain_name       = "droid-corp.com"
+  domain_name       = "*.droid-corp.com"
   validation_method = "DNS"
 
   lifecycle {
