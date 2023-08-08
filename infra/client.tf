@@ -1,3 +1,41 @@
+resource "aws_s3_bucket" "naked_domain_redirect_bucket" {
+  bucket = "droid-corp.com"
+}
+
+resource "aws_s3_bucket_website_configuration" "redirect_bucket_config" {
+  bucket = aws_s3_bucket.naked_domain_redirect_bucket.id
+  redirect_all_requests_to {
+    host_name = "www.droid-corp.com"
+    protocol  = "https"
+  }
+}
+
+resource "aws_s3_bucket_ownership_controls" "redirect_bucket_ownership" {
+  bucket = aws_s3_bucket.naked_domain_redirect_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "redirect_bucket_public_access" {
+  bucket = aws_s3_bucket.naked_domain_redirect_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_acl" "redirect_bucket_acl" {
+  depends_on = [
+    aws_s3_bucket_ownership_controls.redirect_bucket_ownership,
+    aws_s3_bucket_public_access_block.redirect_bucket_public_access,
+  ]
+
+  bucket = aws_s3_bucket.naked_domain_redirect_bucket.id
+  acl    = "public-read"
+}
+
 resource "aws_s3_bucket" "client_code" {
   bucket = "www.droid-corp.com"
 }
@@ -43,32 +81,6 @@ resource "aws_s3_bucket_cors_configuration" "prod_media" {
   }
 }
 
-resource "aws_acm_certificate" "cert" {
-  domain_name       = "droid-corp.com"
-  validation_method = "DNS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_route53_record" "domain_validations" {
-  for_each = {
-    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = aws_route53_zone.primary.zone_id
-}
-
 resource "aws_s3_bucket_public_access_block" "public_read" {
   bucket = aws_s3_bucket.client_code.id
 
@@ -76,41 +88,6 @@ resource "aws_s3_bucket_public_access_block" "public_read" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-}
-
-resource "aws_route53_zone" "primary" {
-  name = "droid-corp.com"
-}
-
-resource "aws_route53_record" "www" {
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = "www.droid-corp.com"
-  type    = "A"
-
-  alias {
-    name                   = aws_s3_bucket.client_code.website_domain
-    zone_id                = aws_s3_bucket.client_code.hosted_zone_id
-    evaluate_target_health = true
-  }
-  depends_on = [aws_s3_bucket.client_code]
-}
-
-resource "aws_route53_record" "naked" {
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = "droid-corp.com"
-  type    = "A"
-
-  alias {
-    name                   = aws_s3_bucket.client_code.website_domain
-    zone_id                = aws_s3_bucket.client_code.hosted_zone_id
-    evaluate_target_health = true
-  }
-
-  depends_on = [aws_s3_bucket.client_code]
-}
-
-resource "aws_s3_bucket" "cloudfront_logging_bucket" {
-  bucket = "landing-gpt-logs"
 }
 
 resource "aws_cloudfront_origin_access_identity" "s3_access_id" {
@@ -130,19 +107,11 @@ resource "aws_cloudfront_distribution" "droid_corp_distribution" {
     domain_name              = aws_s3_bucket.client_code.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.default.id
     origin_id                = aws_s3_bucket.client_code.id
-
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.s3_access_id.cloudfront_access_identity_path
-    }
   }
 
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
-
-  logging_config {
-    bucket = aws_s3_bucket.cloudfront_logging_bucket.bucket_domain_name
-  }
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
