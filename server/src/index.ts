@@ -1,15 +1,27 @@
-import { Handler, APIGatewayEvent } from 'aws-lambda';
-import { Configuration, OpenAIApi } from 'openai';
+import {
+  APIGatewayEventRequestContextV2,
+  APIGatewayProxyEventV2WithRequestContext,
+} from 'aws-lambda';
+import {
+  RequestHandler,
+  // ResponseStream,
+  streamifyResponse,
+} from 'lambda-stream';
+import { OpenAI } from 'openai';
 
 type ChatMessage = {
   readonly content: string;
   readonly role: 'user' | 'assistant' | 'system';
 };
 
+type CompletionResponse = {
+  readonly completion: string;
+};
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
+const openai = new OpenAI(configuration);
 
 const systemMessage = `You are a landing page chat bot. 
     Your role is to convince the user to sign up for the waitlist.
@@ -21,7 +33,9 @@ const systemMessage = `You are a landing page chat bot.
     If a user tries to talk about anything other than the product, politely refuse their request.
     `;
 
-const extractMessages = (event: APIGatewayEvent): readonly ChatMessage[] => {
+const extractMessages = (
+  event: APIGatewayProxyEventV2WithRequestContext<APIGatewayEventRequestContextV2>
+): readonly ChatMessage[] => {
   if (typeof event === 'string') {
     // in local dev test, event comes in as string
     return JSON.parse(event);
@@ -30,16 +44,26 @@ const extractMessages = (event: APIGatewayEvent): readonly ChatMessage[] => {
   }
 };
 
-export const handler: Handler = async (event: APIGatewayEvent) => {
-  const chatCompletion = await openai.createChatCompletion({
+const handleCompletion: RequestHandler = async (
+  event: APIGatewayProxyEventV2WithRequestContext<APIGatewayEventRequestContextV2>
+  // responseStream: ResponseStream
+) => {
+  const stream = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo',
     messages: [
       { role: 'system', content: systemMessage },
       ...extractMessages(event),
     ],
+    stream: true,
   });
-  const { message } = chatCompletion.data.choices[0];
+  // eslint-disable-next-line functional/no-loop-statement
+  for await (const part of stream) {
+    process.stdout.write(part.choices[0]?.delta?.content || '');
+  }
+  process.stdout.write('\n');
 
-  console.log(`Request succeeded: ${message?.content}`);
-  return JSON.stringify({ completion: message?.content });
+  console.log(`Request succeeded: ${'hi mom'}`);
+  return JSON.stringify({ completion: 'hi mom' } as CompletionResponse);
 };
+
+export const handler = streamifyResponse(handleCompletion);

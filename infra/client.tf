@@ -40,58 +40,33 @@ resource "aws_s3_bucket" "client_code" {
   bucket = "www.droid-corp.com"
 }
 
-resource "aws_s3_bucket_website_configuration" "client_code_website" {
+resource "aws_s3_bucket_policy" "allow_cloudfront_access" {
   bucket = aws_s3_bucket.client_code.id
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "index.html"
-  }
+  policy = data.aws_iam_policy_document.allow_cloudfront_access.json
 }
 
-data "aws_iam_policy_document" "s3_public_read_access" {
+data "aws_iam_policy_document" "allow_cloudfront_access" {
   statement {
-    actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.client_code.arn}/*"]
     principals {
-      type        = "AWS"
-      identifiers = ["*"]
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+
+    actions = [
+      "s3:GetObject"
+    ]
+
+    resources = [
+      "${aws_s3_bucket.client_code.arn}/*",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = [aws_cloudfront_distribution.droid_corp_distribution.arn]
     }
   }
-}
-
-resource "aws_s3_bucket_policy" "s3_public_read_access" {
-  bucket = aws_s3_bucket.client_code.id
-  policy = data.aws_iam_policy_document.s3_public_read_access.json
-
-  depends_on = [aws_s3_bucket_public_access_block.public_read]
-}
-
-resource "aws_s3_bucket_cors_configuration" "prod_media" {
-  bucket = aws_s3_bucket.client_code.id
-
-  cors_rule {
-    allowed_headers = ["*"]
-    allowed_methods = ["GET", "HEAD"]
-    allowed_origins = ["*"]
-    expose_headers  = ["ETag"]
-    max_age_seconds = 3000
-  }
-}
-
-resource "aws_s3_bucket_public_access_block" "public_read" {
-  bucket = aws_s3_bucket.client_code.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-resource "aws_cloudfront_origin_access_identity" "s3_access_id" {
-  comment = "Allows CloudFront to reach the S3 bucket"
+  depends_on = [aws_cloudfront_distribution.droid_corp_distribution, aws_s3_bucket.client_code]
 }
 
 resource "aws_cloudfront_origin_access_control" "default" {
@@ -112,6 +87,7 @@ resource "aws_cloudfront_distribution" "droid_corp_distribution" {
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
+  http_version = "http2and3"
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
@@ -141,8 +117,11 @@ resource "aws_cloudfront_distribution" "droid_corp_distribution" {
     }
   }
 
-  viewer_certificate {
+  viewer_certificate { // hint: when bootstrapping, you need to create this distro first before the route53 record
     acm_certificate_arn = aws_acm_certificate.cert.arn
     ssl_support_method  = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
+
+  depends_on = [aws_acm_certificate_validation.cert_validation]
 }

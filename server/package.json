@@ -42,7 +42,8 @@
   "dependencies": {
     "@bitauth/libauth": "^1.17.1",
     "aws-lambda": "^1.0.7",
-    "openai": "^3.3.0"
+    "lambda-stream": "^0.5.0",
+    "openai": "^v4.0.0-beta.8"
   },
   "devDependencies": {
     "@ava/typescript": "^1.1.1",

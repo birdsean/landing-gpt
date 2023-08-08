@@ -53,4 +53,10 @@ resource "aws_route53_record" "domain_validations" {
   ttl             = 60
   type            = each.value.type
   zone_id         = aws_route53_zone.primary.zone_id
+  depends_on = [ aws_acm_certificate.cert, aws_route53_zone.primary ]
+}
+
+resource "aws_acm_certificate_validation" "cert_validation" {
+  certificate_arn         = aws_acm_certificate.cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.domain_validations : record.fqdn]
 }
