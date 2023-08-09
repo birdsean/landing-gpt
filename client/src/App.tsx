@@ -156,7 +156,7 @@ function App() {
       </div>
       <div className="flex items-center h-1/6 flex-col p-5 pt-0">
         <div className="max-w-prose w-full">
-          <div className="flex flex-row leading-none mb-5 text-sm">
+          <div className="flex flex-row leading-none mb-1 text-sm">
             <QuestionPill
               question={`What is ${PRODUCT_NAME}?`}
               color={COLOR}
@@ -174,7 +174,7 @@ function App() {
             />
           </div>
           <form
-            className="w-full h-1/2 outline outline-1 outline-white rounded-none sm:rounded flex flex-row"
+            className="w-full h-1/2 outline outline-1 outline-white rounded flex flex-row"
             ref={formRef}
           >
             <input
