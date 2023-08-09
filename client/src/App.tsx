@@ -1,23 +1,11 @@
 import React from "react";
-import Pill from "./components/PillManager/Pill";
 import Chat, { ChatMessage } from "./api/Chat";
 import { isiOS } from "./helpers/helpers";
+import PillManager from "./components/PillManager/PillManager";
+import { COLORS, PRODUCT_NAME } from "./helpers/variables";
 
-const COLORS = [
-  "red",
-  "orange",
-  "yellow",
-  "green",
-  "blue",
-  "indigo",
-  "purple",
-  "cyan",
-  "pink",
-  "teal",
-  "rose",
-];
+
 const COLOR = COLORS[Math.floor(Math.random() * COLORS.length)];
-const PRODUCT_NAME = "Review Droid";
 
 interface Message extends ChatMessage {
   fontSize?: string;
@@ -157,21 +145,7 @@ function App() {
       <div className="flex items-center h-1/6 flex-col p-5 pt-0">
         <div className="max-w-prose w-full">
           <div className="flex flex-row leading-none mb-1 text-sm">
-            <Pill
-              text={`What is ${PRODUCT_NAME}?`}
-              color={COLOR}
-              onClick={sendMessage}
-            />
-            <Pill
-              text="How does it work?"
-              color={COLOR}
-              onClick={sendMessage}
-            />
-            <Pill
-              text="Who are you?"
-              color={COLOR}
-              onClick={sendMessage}
-            />
+            <PillManager color={COLOR} sendMessage={sendMessage} />
           </div>
           <form
             className="w-full h-1/2 outline outline-1 outline-white rounded flex flex-row"
