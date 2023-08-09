@@ -1,5 +1,5 @@
 import React from "react";
-import QuestionPill from "./components/QuestionPill/QuestionPill";
+import Pill from "./components/PillManager/Pill";
 import Chat, { ChatMessage } from "./api/Chat";
 import { isiOS } from "./helpers/helpers";
 
@@ -157,20 +157,20 @@ function App() {
       <div className="flex items-center h-1/6 flex-col p-5 pt-0">
         <div className="max-w-prose w-full">
           <div className="flex flex-row leading-none mb-1 text-sm">
-            <QuestionPill
-              question={`What is ${PRODUCT_NAME}?`}
+            <Pill
+              text={`What is ${PRODUCT_NAME}?`}
               color={COLOR}
-              sendMessage={sendMessage}
+              onClick={sendMessage}
             />
-            <QuestionPill
-              question="How does it work?"
+            <Pill
+              text="How does it work?"
               color={COLOR}
-              sendMessage={sendMessage}
+              onClick={sendMessage}
             />
-            <QuestionPill
-              question="Who are you?"
+            <Pill
+              text="Who are you?"
               color={COLOR}
-              sendMessage={sendMessage}
+              onClick={sendMessage}
             />
           </div>
           <form
