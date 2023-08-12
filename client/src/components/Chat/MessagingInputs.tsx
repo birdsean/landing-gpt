@@ -48,7 +48,7 @@ const MessagingInputs = ({ color, sendMessage }: MessagingInputsProps) => {
     };
     formRef.current!.addEventListener("submit", handleSubmit);
     return () => {
-      formRef.current!.removeEventListener("submit", handleSubmit);
+      formRef.current?.removeEventListener("submit", handleSubmit);
     };
   });
 
