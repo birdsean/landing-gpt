@@ -10,7 +10,7 @@ interface PillProps {
 function Pill(props: PillProps) {
     return (
         <button 
-            className={`${props.className || ''} rounded-full bg-${props.color}-400 p-1 m-2 px-2 md:p-2 outline-white h-[36px]`}
+            className={`${props.className || ''} rounded-full bg-${props.color}-400 p-1 m-2 px-2 sm:p-2 outline-white`}
             onClick={() => props.onClick(props.text)}
         >{props.text}</button>
     )
