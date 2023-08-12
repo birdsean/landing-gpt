@@ -49,7 +49,7 @@ function Layout(props: LayoutProps) {
           <div className="max-w-prose w-full">{props.footer}</div>
         </ScrollContext.Provider>
       </div>
-      <div className="invisible">
+      <div className="invisible"> {/* need to init some styles that are dynamically set, there's probably a better way to do this */}
         <span className="text-red-400 bg-red-400" />
         <span className="text-orange-400 bg-orange-400" />
         <span className="text-yellow-400 bg-yellow-400" />
@@ -62,7 +62,7 @@ function Layout(props: LayoutProps) {
         <span className="text-teal-400 bg-teal-400" />
         <span className="text-zinc-400 bg-zinc-400" />
         <span className="text-rose-400 bg-rose-400" />
-        <span className="text-5xl" />
+        <span className="text-5xl bg-white" />
       </div>
     </div>
   );

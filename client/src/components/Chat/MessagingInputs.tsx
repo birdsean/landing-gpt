@@ -1,19 +1,28 @@
-import React from "react";
+import React, { useContext } from "react";
 import PillManager from "../PillManager/PillManager";
+import { ScrollContext } from "../Layout/ScrollContext";
+
 
 interface MessagingInputsProps {
   color: string;
-  sendMessage: (message: string, clearInput: () => void) => void;
+  sendMessage: (
+    text: string,
+    scrollBottom: () => void,
+    clearInput: () => void
+  ) => void;
 }
 
 const MessagingInputs = ({ color, sendMessage }: MessagingInputsProps) => {
+  const scrollBottomMessage = useContext(ScrollContext)
+
   const messageBoxRef = React.useRef<HTMLInputElement>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
 
-  const overrideSendMessage = (message: string) => {
-    const clearInput = () => (messageBoxRef.current!.value = "");
-    sendMessage(message, clearInput);
-  };
+  const overrideSendMessage = (text: string) => {
+    sendMessage(text, scrollBottomMessage, clearInput);
+  }
+
+  const clearInput = () => (messageBoxRef.current!.value = "");
 
   // when text box is active and user presses enter, send message
   React.useEffect(() => {
