@@ -1,0 +1,70 @@
+import React from "react";
+import PillManager from "../PillManager/PillManager";
+
+interface MessagingInputsProps {
+  color: string;
+  sendMessage: (message: string, clearInput: () => void) => void;
+}
+
+const MessagingInputs = ({ color, sendMessage }: MessagingInputsProps) => {
+  const messageBoxRef = React.useRef<HTMLInputElement>(null);
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  const overrideSendMessage = (message: string) => {
+    const clearInput = () => (messageBoxRef.current!.value = "");
+    sendMessage(message, clearInput);
+  };
+
+  // when text box is active and user presses enter, send message
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (messageBoxRef.current!.value === "") return;
+        overrideSendMessage(messageBoxRef.current!.value);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  });
+
+  // on form submit, send message
+  React.useEffect(() => {
+    const handleSubmit = (event: Event) => {
+      event.preventDefault();
+      if (messageBoxRef.current!.value === "") return;
+      overrideSendMessage(messageBoxRef.current!.value);
+    };
+    formRef.current!.addEventListener("submit", handleSubmit);
+    return () => {
+      formRef.current!.removeEventListener("submit", handleSubmit);
+    };
+  });
+
+  return (
+    <>
+      <div className="flex flex-row leading-none mb-1 text-sm">
+        <PillManager color={color} sendMessage={overrideSendMessage} />
+      </div>
+      <form
+        className="w-full h-1/2 outline outline-1 outline-white rounded flex flex-row"
+        ref={formRef}
+      >
+        <input
+          className={`bg-black caret-${color}-400 text-${color}-400 p-3 w-5/6 m-0 resize-none`}
+          placeholder="Enter a message to start..."
+          type="text"
+          enterKeyHint="send"
+          ref={messageBoxRef}
+        />
+        <button className={`bg-${color}-400 p-3 w-1/6`} formAction="submit">
+          Send
+        </button>
+      </form>
+    </>
+  );
+};
+
+export default MessagingInputs;

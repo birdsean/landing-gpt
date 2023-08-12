@@ -1,9 +1,10 @@
 import React from "react";
 import { isiOS } from "../../helpers/helpers";
+import { ScrollContext } from "./ScrollContext";
 
 interface LayoutProps {
-    chatBody: JSX.Element
-    footer: JSX.Element
+  chatBody: JSX.Element;
+  footer: JSX.Element;
 }
 
 function Layout(props: LayoutProps) {
@@ -20,6 +21,10 @@ function Layout(props: LayoutProps) {
     };
   });
 
+  const scrollToBottom = () => {
+    scrollBoxRef.current!.scrollTop = scrollBoxRef.current!.scrollHeight;
+  };
+
   return (
     <div className="absolute bottom-0 w-full p-0 bg-gradient-to-br from-black to-slate-800 min-h-screen flex flex-col">
       <div className="fixed top-0 w-full h-1/6 bg-gradient-to-b from-black to-transparent z-10" />
@@ -34,11 +39,15 @@ function Layout(props: LayoutProps) {
               <p className="h-20" />
             ) : null /* no idea why, but my iPhone needs a second buffer */
           }
-          {props.chatBody}
+          <ScrollContext.Provider value={scrollToBottom}>
+            {props.chatBody}
+          </ScrollContext.Provider>
         </div>
       </div>
       <div className="flex items-center h-1/6 flex-col p-5 pt-0">
-        <div className="max-w-prose w-full">{props.footer}</div>
+        <ScrollContext.Provider value={scrollToBottom}>
+          <div className="max-w-prose w-full">{props.footer}</div>
+        </ScrollContext.Provider>
       </div>
       <div className="invisible">
         <span className="text-red-400 bg-red-400" />

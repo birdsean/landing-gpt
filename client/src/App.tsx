@@ -3,6 +3,8 @@ import Chat, { ChatMessage } from "./api/Chat";
 import { isiOS } from "./helpers/helpers";
 import PillManager from "./components/PillManager/PillManager";
 import { COLORS, PRODUCT_NAME } from "./helpers/variables";
+import Messages from "./components/Chat/Messages";
+import MessagingInputs from "./components/Chat/MessagingInputs";
 
 
 const COLOR = COLORS[Math.floor(Math.random() * COLORS.length)];
@@ -21,31 +23,8 @@ function App() {
     },
   ]);
 
-  const messageBoxRef = React.useRef<HTMLInputElement>(null);
+  
   const scrollBoxRef = React.useRef<HTMLDivElement>(null);
-  const formRef = React.useRef<HTMLFormElement>(null);
-
-  const renderMessages = () => {
-    return messages.map((message, index) => {
-      const emphasizedMsg = {
-        __html: message.content.replace(
-          /<(.+?)>/g,
-          `<span class='text-${
-            message.role === "user" ? "" : COLOR
-          }-400'>$1</span>`
-        ),
-      };
-      return (
-        <p
-          key={index}
-          className={`mb-6 break-words ${
-            message.role === "user" ? `text-${COLOR}-400` : "text-white"
-          } text-${message.fontSize || "xl"}`}
-          dangerouslySetInnerHTML={emphasizedMsg}
-        />
-      );
-    });
-  };
 
   const appendCompletionToLastMessage = (completion: string) => {
     setTimeout(() => {
@@ -64,7 +43,7 @@ function App() {
     }, 0);
   };
 
-  const sendMessage = async (text: string) => {
+  const sendMessage = async (text: string, clearInput: () => void) => {
     const updatedChat: Message[] = [
       ...messages,
       { content: text, role: "user" },
@@ -74,7 +53,7 @@ function App() {
       scrollBoxRef.current!.scrollTop = scrollBoxRef.current!.scrollHeight;
     }, 0);
 
-    messageBoxRef.current!.value = "";
+    clearInput();
     const requestBody = updatedChat.map((msg): ChatMessage => {
       return { content: msg.content, role: msg.role };
     });
@@ -85,34 +64,6 @@ function App() {
       scrollBoxRef.current!.scrollTop = scrollBoxRef.current!.scrollHeight;
     }, 100);
   };
-
-  // when text box is active and user presses enter, send message
-  React.useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        if (messageBoxRef.current!.value === "") return;
-        sendMessage(messageBoxRef.current!.value);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  });
-
-  // on form submit, send message
-  React.useEffect(() => {
-    const handleSubmit = (event: Event) => {
-      event.preventDefault();
-      if (messageBoxRef.current!.value === "") return;
-      sendMessage(messageBoxRef.current!.value);
-    };
-    formRef.current!.addEventListener("submit", handleSubmit);
-    return () => {
-      formRef.current!.removeEventListener("submit", handleSubmit);
-    };
-  });
 
   React.useEffect(() => {
     // scroll to bottom of scrollBoxRef on focusout
@@ -139,29 +90,12 @@ function App() {
               <p className="h-20" />
             ) : null /* no idea why, but my iPhone needs a second buffer */
           }
-          {renderMessages()}
+          <Messages messages={messages} color={COLOR}/>
         </div>
       </div>
       <div className="flex items-center h-1/6 flex-col p-5 pt-0">
         <div className="max-w-prose w-full">
-          <div className="flex flex-row leading-none mb-1 text-sm">
-            <PillManager color={COLOR} sendMessage={sendMessage} />
-          </div>
-          <form
-            className="w-full h-1/2 outline outline-1 outline-white rounded flex flex-row"
-            ref={formRef}
-          >
-            <input
-              className={`bg-black caret-${COLOR}-400 text-${COLOR}-400 p-3 w-5/6 m-0 resize-none`}
-              placeholder="Enter a message to start..."
-              type="text"
-              enterKeyHint="send"
-              ref={messageBoxRef}
-            />
-            <button className={`bg-${COLOR}-400 p-3 w-1/6`} formAction="submit">
-              Send
-            </button>
-          </form>
+          <MessagingInputs sendMessage={sendMessage} color={COLOR} />
         </div>
       </div>
       <div className="invisible">
