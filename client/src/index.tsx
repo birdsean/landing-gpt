@@ -2,9 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import ErrorPage from "./pages/Error";
+import App from "./App";
+import AdminPage from "./pages/Admin";
 
 const router = createBrowserRouter([
   {
@@ -12,6 +13,10 @@ const router = createBrowserRouter([
     element: <App/>,
     errorElement: <ErrorPage />,
   },
+  {
+    path: "/admin",
+    element: <AdminPage/>
+  }
 ]);
 
 const root = ReactDOM.createRoot(

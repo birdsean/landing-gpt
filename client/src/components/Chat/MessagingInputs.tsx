@@ -2,9 +2,11 @@ import React, { useContext } from "react";
 import PillManager from "../PillManager/PillManager";
 import { ScrollContext } from "../Layout/ScrollContext";
 
-
 interface MessagingInputsProps {
   color: string;
+  hidePills?: boolean;
+  placeholder?: string;
+
   sendMessage: (
     text: string,
     scrollBottom: () => void,
@@ -12,15 +14,15 @@ interface MessagingInputsProps {
   ) => void;
 }
 
-const MessagingInputs = ({ color, sendMessage }: MessagingInputsProps) => {
-  const scrollBottomMessage = useContext(ScrollContext)
+const MessagingInputs = ({ color, sendMessage, hidePills, placeholder }: MessagingInputsProps) => {
+  const scrollBottomMessage = useContext(ScrollContext);
 
   const messageBoxRef = React.useRef<HTMLInputElement>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
 
   const overrideSendMessage = (text: string) => {
     sendMessage(text, scrollBottomMessage, clearInput);
-  }
+  };
 
   const clearInput = () => (messageBoxRef.current!.value = "");
 
@@ -52,18 +54,26 @@ const MessagingInputs = ({ color, sendMessage }: MessagingInputsProps) => {
     };
   });
 
-  return (
-    <>
+  const renderPills = () => {
+    if (hidePills) return null;
+
+    return (
       <div className="flex flex-row leading-none mb-1 text-sm">
         <PillManager color={color} sendMessage={overrideSendMessage} />
       </div>
+    );
+  };
+
+  return (
+    <>
+      {renderPills()}
       <form
         className="w-full h-1/2 outline outline-1 outline-white rounded flex flex-row"
         ref={formRef}
       >
         <input
           className={`bg-black caret-${color}-400 text-${color}-400 p-3 w-5/6 m-0 resize-none`}
-          placeholder="Enter a message to start..."
+          placeholder={placeholder || "Enter a message to start..."}
           type="text"
           enterKeyHint="send"
           ref={messageBoxRef}

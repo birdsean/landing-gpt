@@ -1,6 +1,6 @@
 export interface ChatMessage {
   content: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
 }
 
 const API_URL =
