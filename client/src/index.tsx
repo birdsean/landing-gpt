@@ -4,13 +4,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import ErrorPage from "./pages/Error";
-import App from "./App";
 import AdminPage from "./pages/Admin";
+import ChatPage from "./pages/Chat";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App/>,
+    element: <ChatPage/>,
     errorElement: <ErrorPage />,
   },
   {

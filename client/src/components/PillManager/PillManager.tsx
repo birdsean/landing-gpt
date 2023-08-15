@@ -10,6 +10,7 @@ interface PillConfig {
 
 interface PillManagerProps {
   color: string;
+  disabled?: boolean;
   sendMessage: (message: string) => void;
 }
 
@@ -32,6 +33,8 @@ function PillManager(props: PillManagerProps) {
   const [pills, setPills] = React.useState<PillConfig[]>(defaultPills);
 
   const onClick = (text: string) => {
+    if (props.disabled) return
+
     // remove pill from pills that has matching text
     props.sendMessage(text);
     const newPills = pills.filter((pill) => pill.text !== text);
@@ -46,7 +49,7 @@ function PillManager(props: PillManagerProps) {
       <Pill
         key={index}
         text={pill.text}
-        color={pill.hightlight ? 'white' : `${props.color}-400`}
+        color={pill.hightlight ? "white" : `${props.color}-400`}
         onClick={onClick}
         path={pill.route}
         className={index > COUNT_PILLS - 1 ? "hidden md:inline" : ""}

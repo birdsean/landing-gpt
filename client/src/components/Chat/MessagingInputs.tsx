@@ -5,6 +5,7 @@ import { ScrollContext } from "../Layout/ScrollContext";
 interface MessagingInputsProps {
   color: string;
   hidePills?: boolean;
+  disabled?: boolean;
   placeholder?: string;
 
   sendMessage: (
@@ -14,7 +15,13 @@ interface MessagingInputsProps {
   ) => void;
 }
 
-const MessagingInputs = ({ color, sendMessage, hidePills, placeholder }: MessagingInputsProps) => {
+const MessagingInputs = ({
+  color,
+  sendMessage,
+  hidePills,
+  placeholder,
+  disabled,
+}: MessagingInputsProps) => {
   const scrollBottomMessage = useContext(ScrollContext);
 
   const messageBoxRef = React.useRef<HTMLInputElement>(null);
@@ -59,7 +66,7 @@ const MessagingInputs = ({ color, sendMessage, hidePills, placeholder }: Messagi
 
     return (
       <div className="flex flex-row leading-none mb-1 text-sm">
-        <PillManager color={color} sendMessage={overrideSendMessage} />
+        <PillManager color={color} sendMessage={overrideSendMessage} disabled={disabled} />
       </div>
     );
   };
@@ -78,7 +85,11 @@ const MessagingInputs = ({ color, sendMessage, hidePills, placeholder }: Messagi
           enterKeyHint="send"
           ref={messageBoxRef}
         />
-        <button className={`bg-${color}-400 p-3 w-1/6`} formAction="submit">
+        <button
+          className={`bg-${color}-400 p-3 w-1/6`}
+          formAction="submit"
+          disabled={disabled}
+        >
           Send
         </button>
       </form>

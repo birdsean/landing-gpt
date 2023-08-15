@@ -12,6 +12,7 @@ export interface Message extends ChatMessage {
 const COLOR = COLORS[Math.floor(Math.random() * COLORS.length)];
 
 function ChatPage() {
+  const [awaitingCompletion, setAwaitingCompletion] = React.useState(false);
   const [messages, setMessages] = React.useState<Message[]>([
     { content: "Hi!", role: "assistant", fontSize: "5xl" },
     {
@@ -46,6 +47,10 @@ function ChatPage() {
     scrollBottom: () => void,
     clearInput: () => void
   ) => {
+    if (awaitingCompletion) return;
+
+    setAwaitingCompletion(true)
+
     const updatedChat: Message[] = [
       ...messages,
       { content: text, role: "user" },
@@ -63,6 +68,8 @@ function ChatPage() {
     await Chat.getCompletion(requestBody, (completion: string) =>
       appendCompletionToLastMessage(completion, scrollBottom)
     );
+
+    setAwaitingCompletion(false)
 
     setTimeout(() => {
       scrollBottom();
@@ -83,7 +90,7 @@ function ChatPage() {
   return (
     <Layout
       chatBody={<Messages messages={messages} color={COLOR} />}
-      footer={<MessagingInputs sendMessage={sendMessage} color={COLOR} />}
+      footer={<MessagingInputs sendMessage={sendMessage} color={COLOR} disabled={awaitingCompletion} />}
     />
   );
 }
