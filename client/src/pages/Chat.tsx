@@ -1,15 +1,17 @@
 import React from "react";
 import Chat, { ChatMessage } from "../api/Chat";
-import { COLORS, PRODUCT_NAME } from "../helpers/variables";
+import { COLORS, EMOJIS, PRODUCT_NAME } from "../helpers/variables";
 import Messages from "../components/Chat/Messages";
 import MessagingInputs from "../components/Chat/MessagingInputs";
 import Layout from "../components/Layout/Layout";
+import { Helmet } from "react-helmet";
 
 export interface Message extends ChatMessage {
   fontSize?: string;
 }
 
 const COLOR = COLORS[Math.floor(Math.random() * COLORS.length)];
+const EMOJI = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
 
 function ChatPage() {
   const [awaitingCompletion, setAwaitingCompletion] = React.useState(false);
@@ -49,7 +51,7 @@ function ChatPage() {
   ) => {
     if (awaitingCompletion) return;
 
-    setAwaitingCompletion(true)
+    setAwaitingCompletion(true);
 
     const updatedChat: Message[] = [
       ...messages,
@@ -69,7 +71,7 @@ function ChatPage() {
       appendCompletionToLastMessage(completion, scrollBottom)
     );
 
-    setAwaitingCompletion(false)
+    setAwaitingCompletion(false);
 
     setTimeout(() => {
       scrollBottom();
@@ -88,10 +90,22 @@ function ChatPage() {
   });
 
   return (
-    <Layout
-      chatBody={<Messages messages={messages} color={COLOR} />}
-      footer={<MessagingInputs sendMessage={sendMessage} color={COLOR} disabled={awaitingCompletion} />}
-    />
+    <>
+      <Helmet>
+        <title>{PRODUCT_NAME}</title>
+        <link rel="icon" href={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${EMOJI}</text></svg>`}/>
+      </Helmet>
+      <Layout
+        chatBody={<Messages messages={messages} color={COLOR} />}
+        footer={
+          <MessagingInputs
+            sendMessage={sendMessage}
+            color={COLOR}
+            disabled={awaitingCompletion}
+          />
+        }
+      />
+    </>
   );
 }
 
