@@ -6,27 +6,28 @@ interface PillConfig {
   text: string;
   route?: string;
   hightlight?: boolean;
+  onClick?: () => void;
 }
 
 interface PillManagerProps {
   color: string;
   disabled?: boolean;
   sendMessage: (message: string) => void;
+  onClickJoinWaitlist: () => void;
 }
-
-const defaultPills: PillConfig[] = [
-  { text: `What is ${PRODUCT_NAME}?` },
-  { text: "How does it work?" },
-  { text: "Who are you?" },
-  { text: "Who is it for?" },
-  { text: "Join waitlist", hightlight: true, route: "/waitlist" },
-  { text: `What does it cost?` },
-  { text: `Can I trust ${PRODUCT_NAME}?` },
-];
 
 const COUNT_PILLS = 3;
 
 function PillManager(props: PillManagerProps) {
+  const defaultPills: PillConfig[] = [
+    { text: `What is ${PRODUCT_NAME}?` },
+    { text: "How does it work?" },
+    { text: "Who are you?" },
+    { text: "Who is it for?" },
+    { text: "Join waitlist", hightlight: true, onClick: props.onClickJoinWaitlist },
+    { text: `What does it cost?` },
+    { text: `Can I trust ${PRODUCT_NAME}?` },
+  ];
   const [pills, setPills] = React.useState<PillConfig[]>(defaultPills);
 
   const onClick = (text: string) => {
@@ -50,12 +51,20 @@ function PillManager(props: PillManagerProps) {
     if (index > COUNT_PILLS) {
       return <></>;
     }
+
+    const pillOnClick = () => {
+      if (pill.onClick) {
+        pill.onClick();
+      }
+      onClick(pill.text);
+    }
+
     return (
       <Pill
-        key={index}
+        key={pill.text}
         text={pill.text}
         color={pill.hightlight ? "white" : `${props.color}-400`}
-        onClick={onClick}
+        onClick={pillOnClick}
         path={pill.route}
         className={index > COUNT_PILLS - 1 ? "hidden sm:inline" : ""}
       />

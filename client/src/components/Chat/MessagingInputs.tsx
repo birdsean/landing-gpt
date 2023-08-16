@@ -22,6 +22,9 @@ const MessagingInputs = ({
   placeholder,
   disabled,
 }: MessagingInputsProps) => {
+  const [placeholderOverride, setPlaceholderOverride] =
+    React.useState<string>();
+
   const scrollBottomMessage = useContext(ScrollContext);
 
   const messageBoxRef = React.useRef<HTMLInputElement>(null);
@@ -29,6 +32,9 @@ const MessagingInputs = ({
 
   const overrideSendMessage = (text: string) => {
     sendMessage(text, scrollBottomMessage, clearInput);
+    if (placeholderOverride) {
+      setPlaceholderOverride(undefined);
+    }
   };
 
   const clearInput = () => (messageBoxRef.current!.value = "");
@@ -69,8 +75,13 @@ const MessagingInputs = ({
         color={color}
         sendMessage={overrideSendMessage}
         disabled={disabled}
+        onClickJoinWaitlist={onClickJoinWaitlist}
       />
     );
+  };
+
+  const onClickJoinWaitlist = () => {
+    setPlaceholderOverride("Enter your email here to join the waitlist!");
   };
 
   return (
@@ -82,7 +93,9 @@ const MessagingInputs = ({
       >
         <input
           className={`bg-black caret-${color}-400 text-${color}-400 p-3 w-5/6 m-0 resize-none`}
-          placeholder={placeholder || "Enter a message to start..."}
+          placeholder={
+            placeholderOverride || placeholder || "Enter a message to start..."
+          }
           type="text"
           enterKeyHint="send"
           ref={messageBoxRef}
