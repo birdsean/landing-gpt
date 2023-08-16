@@ -17,13 +17,10 @@ interface PillManagerProps {
 const defaultPills: PillConfig[] = [
   { text: `What is ${PRODUCT_NAME}?` },
   { text: "How does it work?" },
-  { text: "Join waitlist", hightlight: true, route: "/waitlist" },
   { text: "Who are you?" },
-  { text: `How is it different?` },
+  { text: "Who is it for?" },
+  { text: "Join waitlist", hightlight: true, route: "/waitlist" },
   { text: `What does it cost?` },
-  // { text: `Show me a demo?`},
-  { text: `Is it customizable?` },
-  // { text: `Any discounts?`},
   { text: `Can I trust ${PRODUCT_NAME}?` },
 ];
 
@@ -33,7 +30,7 @@ function PillManager(props: PillManagerProps) {
   const [pills, setPills] = React.useState<PillConfig[]>(defaultPills);
 
   const onClick = (text: string) => {
-    if (props.disabled) return
+    if (props.disabled) return;
 
     // remove pill from pills that has matching text
     props.sendMessage(text);
@@ -41,8 +38,16 @@ function PillManager(props: PillManagerProps) {
     setPills(newPills);
   };
 
+  // if "who are you?" pill is ever at position 0, remove it
+  React.useEffect(() => {
+    if (pills[0]?.text === "Who are you?") {
+      const newPills = pills.filter((pill) => pill.text !== "Who are you?");
+      setPills(newPills);
+    }
+  }, [pills]);
+
   const renderedPills = pills?.map((pill, index) => {
-    if (index >= COUNT_PILLS) {
+    if (index > COUNT_PILLS) {
       return <></>;
     }
     return (
@@ -52,12 +57,16 @@ function PillManager(props: PillManagerProps) {
         color={pill.hightlight ? "white" : `${props.color}-400`}
         onClick={onClick}
         path={pill.route}
-        className={index > COUNT_PILLS - 1 ? "hidden md:inline" : ""}
+        className={index > COUNT_PILLS - 1 ? "hidden sm:inline" : ""}
       />
     );
   });
 
-  return <>{renderedPills}</>;
+  return (
+    <div className={`flex flex-row ${pills.length < 4 ? '' : 'justify-between'} leading-none mb-1 text-sm`}>
+      {renderedPills}
+    </div>
+  );
 }
 
 export default PillManager;

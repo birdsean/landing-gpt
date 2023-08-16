@@ -65,9 +65,11 @@ const MessagingInputs = ({
     if (hidePills) return null;
 
     return (
-      <div className="flex flex-row leading-none mb-1 text-sm">
-        <PillManager color={color} sendMessage={overrideSendMessage} disabled={disabled} />
-      </div>
+      <PillManager
+        color={color}
+        sendMessage={overrideSendMessage}
+        disabled={disabled}
+      />
     );
   };
 
