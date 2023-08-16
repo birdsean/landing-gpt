@@ -82,15 +82,17 @@ const handleCompletion: RequestHandler = async (
   }
 
   const sessionId = event.headers && event.headers['x-session-id'] || 'none';
+  const ipAddress = event.requestContext && event.requestContext.http.sourceIp || 'unknown';
 
   const command = new PutCommand({
     TableName: "ChatMessages",
     Item: {
       MessageId: hashMessages(messages),
-      SessionId: sessionId,
+      SessionId: `${new Date().toISOString().split('T')[0]}:${new Date().toISOString().split('T')[1].split('.')[0]}#${sessionId}`,
       Messages: JSON.stringify([...messages, { role: 'assistant', content: completion }]),
       ProductName: "Review Droid",
       CreatedAt: Math.floor(Date.now() / 1000), // unix timestamp in seconds
+      IpAddress: ipAddress,
     },
   });
 
