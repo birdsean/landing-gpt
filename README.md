@@ -22,7 +22,7 @@ Who needs landing pages when you can have a chat bot explain your product instea
 1. Make sure you have an OpenAI API key. You can get one [here](https://beta.openai.com/).
 1. Store the API key in your environment variables as `OPENAI_API_KEY`.
 1. Have your AWS credentials handy as well, saved as environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
-1. Create a Terraform state bucket and replace it in `terraform/main.tf`.
+1. Create a Terraform state S3 bucket and replace it in `terraform/main.tf`.
 1. Buy a domain name and replace all references to `www.droid-corp.com` with it.
 1. Transfer the domain nameservers to AWS Route53.
 1. Run `terraform init` and `terraform apply` in the `terraform` directory.
